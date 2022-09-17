@@ -10,6 +10,59 @@ class CreatePage(BasePage):
         if "project_by_supervisor" not in st.session_state:
             st.session_state["project_by_supervisor"] = False
 
+    def render_by_mp(self, mp: MatchingProblem):
+        gp = mp.groups()
+        if mp == MatchingProblem.STABLE_ROOMMATES:
+            st.write(gp[0])
+            st.text_input("表示名", key="proposor_name")
+            st.text_area("選択肢", height=TEXT_AREA_HEIGHT, key="proposer_choice")
+            st.file_uploader(
+                "CSVファイル", type="csv", accept_multiple_files=False, key="proposer_csv", help="もしあればCSVファイルをアップロードしてください"
+            )
+        else:
+            col23_condition = not st.session_state["project_by_supervisor"] and mp == MatchingProblem.STUDENT_ALLOCATION
+            if col23_condition:
+                col21, col22, col23 = st.columns([1, 1, 1])
+            else:
+                col21, col22 = st.columns([1, 1])
+
+            with col21:
+                st.write(gp[0])
+                st.text_input("表示名", key="proposor_name")
+                st.text_area("選択肢", height=TEXT_AREA_HEIGHT, key="proposer_choice")
+                st.file_uploader(
+                    "CSVファイル",
+                    type="csv",
+                    accept_multiple_files=False,
+                    key="proposer_csv",
+                    help="入力する代わりにCSVファイルをアップロードすることもできます",
+                )
+            with col22:
+                st.write(gp[1])
+                st.text_input("表示名", key="acceptor_name")
+                st.text_area(
+                    "選択肢,キャパシティ" if mp.has_capacity() else "選択肢", height=TEXT_AREA_HEIGHT, key="acceptor_choice"
+                )
+                st.file_uploader(
+                    "CSVファイル",
+                    type="csv",
+                    accept_multiple_files=False,
+                    key="acceptor_csv",
+                    help="入力する代わりにCSVファイルをアップロードすることもできます",
+                )
+            if col23_condition:
+                with col23:
+                    st.write(gp[2])
+                    st.text_input("表示名", key="medium_name")
+                    st.text_area("選択肢,キャパシティ", height=TEXT_AREA_HEIGHT, key="medium_choice")
+                    st.file_uploader(
+                        "CSVファイル",
+                        type="csv",
+                        accept_multiple_files=False,
+                        key="medium_csv",
+                        help="入力する代わりにCSVファイルをアップロードすることもできます",
+                    )
+
     def render(self):
         st.title("新規投票作成")
         st.subheader("基本設定")
@@ -34,34 +87,16 @@ class CreatePage(BasePage):
             format_func=lambda x: str(x),
             horizontal=True,
         )
-        gp = mp.groups()
 
         st.subheader("問題設定")
-        st.warning("テキストボックスは選択肢を改行区切りで入力してください")
-        col21, col22, col23 = st.columns([1, 1, 1])
-        with col21:
-            st.write(gp[0])
-            st.text_input("表示名", key="proposor_name")
-            st.text_area("選択肢", height=TEXT_AREA_HEIGHT, key="proposer_choice")
-        if len(gp) > 1:
-            with col22:
-                st.write(gp[1])
-                st.text_input("表示名", key="acceptor_name")
-                col31, col32 = st.columns([4, 1])
-                col31.text_area("選択肢", height=TEXT_AREA_HEIGHT, key="acceptor_choice")
-                if mp.has_capacity():
-                    col32.text_area("キャパ", height=TEXT_AREA_HEIGHT, key="acceptor_capacity")
-        if not st.session_state["project_by_supervisor"] and len(gp) > 2:
-            with col23:
-                st.write(gp[2])
-                st.text_input("表示名", key="medium_name")
-                col41, col42 = st.columns([4, 1])
-                col41.text_area("選択肢", height=TEXT_AREA_HEIGHT, key="medium_choice")
-                col42.text_area("キャパ", height=TEXT_AREA_HEIGHT, key="medium_capacity")
+        st.warning("テキストエリアでは選択肢を改行区切りで入力してください．「選択肢,キャパシティ」とある場合はカンマ区切りでキャパシティを入力してください")
+
+        self.render_by_mp(mp)
 
         st.subheader("その他投票時設定")
         st.checkbox("選択肢の初期配置をランダムにする", key="randomize")
-        st.checkbox("研究テーマは各教員に記入してもらう", key="project_by_supervisor")
+        if mp == MatchingProblem.STUDENT_ALLOCATION:
+            st.checkbox("研究テーマは各教員に記入してもらう", key="project_by_supervisor")
 
         col51, col52, _ = st.columns([1, 1, 8])
 
