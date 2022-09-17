@@ -3,3 +3,4 @@ streamlit-draggable-list
 streamlit-auth0
 matching
 firebase-admin
+dataclasses

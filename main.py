@@ -15,7 +15,7 @@ if not st.session_state.get("is_started", False):
     st.set_page_config(
         page_title="Sexytant Matching Proposal",
         page_icon="🧊",
-        layout="centered",
+        layout="wide",
         initial_sidebar_state="auto",
         menu_items={
             "Get Help": "https://www.extremelycoolapp.com/help",
