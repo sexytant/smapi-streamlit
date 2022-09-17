@@ -4,6 +4,9 @@ AUTH0_CLIENT_ID = "fcU1HuJJyqgGnQVwFrfKdh4LtX5o0FKD"
 AUTH0_DOMAIN = "tk42.jp.auth0.com"
 
 
+TEXT_AREA_HEIGHT = 220
+
+
 class PageId(Enum):
     TOP = auto()
     INTRO = auto()
@@ -30,6 +33,9 @@ class MatchingProblem(IntEnum):
             return ["Proposer: プロポーズ側(研修医)", "Acceptor: 受け入れ側(病院)"]
         elif self == MatchingProblem.STUDENT_ALLOCATION:
             return ["Student: 学生側", "Supervisor: 教員側", "Project: 研究テーマ"]
+
+    def has_capacity(self):
+        return self != MatchingProblem.STABLE_MARRIAGE
 
 
 class MailSendMode(IntEnum):

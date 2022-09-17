@@ -4,3 +4,4 @@ streamlit-auth0
 matching
 firebase-admin
 dataclasses
+streamlit-nested-layout

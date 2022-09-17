@@ -1,6 +1,7 @@
 import streamlit as st
 from .base import BasePage
-from smapi.const import MatchingProblem, MailSendMode
+import streamlit_nested_layout
+from smapi.const import MatchingProblem, MailSendMode, TEXT_AREA_HEIGHT
 
 
 class CreatePage(BasePage):
@@ -41,21 +42,31 @@ class CreatePage(BasePage):
         with col21:
             st.write(gp[0])
             st.text_input("表示名", key="proposor_name")
-            st.text_area("選択肢", key="proposer_choice")
+            st.text_area("選択肢", height=TEXT_AREA_HEIGHT, key="proposer_choice")
         if len(gp) > 1:
             with col22:
                 st.write(gp[1])
                 st.text_input("表示名", key="acceptor_name")
-                st.text_area("選択肢", key="acceptor_choice")
+                col31, col32 = st.columns([4, 1])
+                col31.text_area("選択肢", height=TEXT_AREA_HEIGHT, key="acceptor_choice")
+                if mp.has_capacity():
+                    col32.text_area("キャパ", height=TEXT_AREA_HEIGHT, key="acceptor_capacity")
         if not st.session_state["project_by_supervisor"] and len(gp) > 2:
             with col23:
                 st.write(gp[2])
                 st.text_input("表示名", key="medium_name")
-                st.text_area("選択肢", key="medium_choice")
+                col41, col42 = st.columns([4, 1])
+                col41.text_area("選択肢", height=TEXT_AREA_HEIGHT, key="medium_choice")
+                col42.text_area("キャパ", height=TEXT_AREA_HEIGHT, key="medium_capacity")
 
         st.subheader("その他投票時設定")
         st.checkbox("選択肢の初期配置をランダムにする", key="randomize")
         st.checkbox("研究テーマは各教員に記入してもらう", key="project_by_supervisor")
 
-        if st.button("作成！"):
-            st.success("ボタンが押されました！")
+        col51, col52, _ = st.columns([1, 1, 8])
+
+        if col51.button("保存"):
+            st.success("保存ボタンが押されました！")
+
+        if col52.button("公開"):
+            st.success("公開ボタンが押されました！")
