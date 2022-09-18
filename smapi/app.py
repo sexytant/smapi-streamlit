@@ -16,10 +16,14 @@ class MultiPageApp:
         with st.sidebar:
             user_info = login_button(client_id=AUTH0_CLIENT_ID, domain=AUTH0_DOMAIN)
             if user_info:
-                st.session_state["sid"] = user_info["sid"]
+                if not user_info["email_verified"]:
+                    st.error("Email is not verified")
+                    return
+
+                st.session_state["user_info"] = user_info
             else:
-                if "sid" in st.session_state and st.session_state["sid"] is None:
-                    del st.session_state["sid"]
+                if "user_info" in st.session_state and st.session_state["user_info"] is None:
+                    del st.session_state["user_info"]
                 st.warning("Please login to continue")
 
         # ページ選択ボックスを追加

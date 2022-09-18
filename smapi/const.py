@@ -7,6 +7,10 @@ AUTH0_DOMAIN = "tk42.jp.auth0.com"
 TEXT_AREA_HEIGHT = 220
 
 
+def hash_client(ref):
+    return hash(ref)
+
+
 class PageId(Enum):
     TOP = auto()
     INTRO = auto()
@@ -35,7 +39,7 @@ class MatchingProblem(IntEnum):
             return ["Student: 学生側", "Supervisor: 教員側", "Project: 研究テーマ"]
 
     def has_capacity(self):
-        return self != MatchingProblem.STABLE_MARRIAGE
+        return self == MatchingProblem.HOSPITAL_RESIDENT or self == MatchingProblem.STUDENT_ALLOCATION
 
 
 class MailSendMode(IntEnum):
